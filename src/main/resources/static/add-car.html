@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <title>Cars App</title>
+    <style>
+        /* Add your CSS styles here */
+
+    </style>
+</head>
+<body>
+<nav>
+    <a href="index.html">Main page</a>
+    <a href="add-car.html">Add Car</a>
+    <a href="delete-car.html">Remove Car</a>
+    <!-- Dodaj inne linki według potrzeb -->
+</nav>
+<h1>Cars App</h1>
+
+<!-- Form for adding a new car -->
+<form id="addCarForm">
+    <label for="brand">Brand:</label>
+    <input type="text" id="brand" name="brand" required>
+
+    <label for="model">Model:</label>
+    <input type="text" id="model" name="model" required>
+
+    <label for="year">Year:</label>
+    <input type="number" id="year" name="year" required>
+
+    <button type="button" onclick="addCar()">Add Car</button>
+</form>
+<script>
+        // Add your JavaScript code here
+
+        function listCars() {
+        fetch('http://localhost:8080/api/cars')
+        .then(response => response.json())
+        .then(data => {
+            const carTableBody = document.getElementById('carList');
+            carTableBody.innerHTML = ''; // Wyczyszczenie poprzednich danych
+
+            data.forEach(car => {
+                const row = carTableBody.insertRow();
+                const cellId = row.insertCell(0);
+                const cellBrand = row.insertCell(1);
+                const cellModel = row.insertCell(2);
+                const cellYear = row.insertCell(3);
+
+                // Wypełnianie komórek danymi
+                cellId.textContent = car.id;
+                cellBrand.textContent = car.brand;
+                cellModel.textContent = car.model;
+                cellYear.textContent = car.year;
+            });
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+
+        function addCar() {
+    const brand = document.getElementById('brand').value;
+    const model = document.getElementById('model').value;
+    const year = document.getElementById('year').value;
+
+    // Implementacja dodawania samochodu do API
+    fetch('http://localhost:8080/api/cars', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ brand, model, year }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Aktualizacja listy samochodów po dodaniu
+        listCars();
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+
+</script>
+</body>
+</html>

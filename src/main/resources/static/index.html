@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cars App</title>
+    <style>
+        /* Add your CSS styles here */
+    </style>
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+<nav>
+    <a href="index.html">Main page</a>
+    <a href="add-car.html">Add Car</a>
+    <a href="delete-car.html">Remove Car</a>
+    <!-- Dodaj inne linki według potrzeb -->
+</nav>
+<h1>Cars App</h1>
+<p></p>
+<p></p>
+<p></p>
+<p></p>
+
+<!-- List of cars -->
+<p>List of Cars</p>
+<table id="carTable">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Brand</th>
+        <th>Model</th>
+        <th>Year</th>
+    </tr>
+    </thead>
+    <tbody id="carList">
+    <!-- Tabela będzie wypełniana dynamicznie -->
+    </tbody>
+</table>
+<script>
+        // Add your JavaScript code here
+
+// Aktualizuj funkcję listCars, aby korzystała z tabeli HTML
+function listCars() {
+        fetch('http://localhost:8080/api/cars')
+        .then(response => response.json())
+        .then(data => {
+            const carTableBody = document.getElementById('carList');
+            carTableBody.innerHTML = ''; // Wyczyszczenie poprzednich danych
+
+            data.forEach(car => {
+                const row = carTableBody.insertRow();
+                const cellId = row.insertCell(0);
+                const cellBrand = row.insertCell(1);
+                const cellModel = row.insertCell(2);
+                const cellYear = row.insertCell(3);
+
+                // Wypełnianie komórek danymi
+                cellId.textContent = car.id;
+                cellBrand.textContent = car.brand;
+                cellModel.textContent = car.model;
+                cellYear.textContent = car.year;
+            });
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+// Wywołaj funkcję listCars() przy załadowaniu strony
+document.addEventListener('DOMContentLoaded', listCars);
+
+    </script>
+</body>
+</html>

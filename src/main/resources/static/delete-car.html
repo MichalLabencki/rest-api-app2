@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <title>Cars App</title>
+    <style>
+        /* Add your CSS styles here */
+    </style>
+</head>
+<body>
+<nav>
+    <a href="index.html">Main page</a>
+    <a href="add-car.html">Add Car</a>
+    <a href="delete-car.html">Remove Car</a>
+    <!-- Dodaj inne linki według potrzeb -->
+</nav>
+<h1>Cars App</h1>
+<p>Remove Car by ID</p>
+
+<form id="removeCarForm">
+    <label for="carId">ID:</label>
+    <input type="number" id="carId" name="carId" required>
+
+    <button type="button" onclick="removeCarById()">Remove Car</button>
+</form>
+<p>Delete all existing cars</p>
+<button type="button" onclick="deleteAllCars()">Delete All Cars</button>
+
+<p>List of Cars</p>
+<table id="carTable">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Brand</th>
+        <th>Model</th>
+        <th>Year</th>
+    </tr>
+    </thead>
+    <tbody id="carList">
+    <!-- Tabela będzie wypełniana dynamicznie -->
+    </tbody>
+</table>
+
+<script>
+        // Add your JavaScript code here
+
+// Aktualizuj funkcję listCars, aby korzystała z tabeli HTML
+
+
+function removeCarById() {
+    const carIdInput = document.getElementById('carId');
+    const id = carIdInput.value;
+
+    if (!id) {
+        console.error('Please enter a valid Car ID.');
+        return;
+    }
+
+    fetch(`http://localhost:8080/api/cars/${id}`, {
+        method: 'DELETE',
+    })
+    .then(response => {
+        if (response.ok) {
+            console.log(`Car with ID ${id} removed successfully.`);
+            // Aktualizacja listy samochodów po usunięciu
+            listCars();
+        } else {
+            console.error('Error:', response.statusText);
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+function deleteAllCars() {
+    // Implementacja usuwania samochodu z API
+    fetch(`http://localhost:8080/api/cars/deleteAll`, {
+        method: 'DELETE',
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Aktualizacja listy samochodów po usunięciu
+        listCars();
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+function listCars() {
+    fetch('http://localhost:8080/api/cars')
+        .then(response => response.json())
+        .then(data => {
+            const carTableBody = document.getElementById('carList');
+            carTableBody.innerHTML = ''; // Wyczyszczenie poprzednich danych
+
+            data.forEach(car => {
+                const row = carTableBody.insertRow();
+                const cellId = row.insertCell(0);
+                const cellBrand = row.insertCell(1);
+                const cellModel = row.insertCell(2);
+                const cellYear = row.insertCell(3);
+
+                // Wypełnianie komórek danymi
+                cellId.textContent = car.id;
+                cellBrand.textContent = car.brand;
+                cellModel.textContent = car.model;
+                cellYear.textContent = car.year;
+            });
+        })
+        .catch(error => console.error('Error:', error));
+}
+
+// Wywołaj funkcję listCars() przy załadowaniu strony
+document.addEventListener('DOMContentLoaded', listCars);
+
+    </script>
+</body>
+</html>
